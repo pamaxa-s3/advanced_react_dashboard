@@ -65,3 +65,19 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+
+body[data-theme="light"] {
+  --bg: #ffffff;
+  --text: #111111;
+}
+
+body[data-theme="dark"] {
+  --bg: #0f172a;
+  --text: #f8fafc;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
