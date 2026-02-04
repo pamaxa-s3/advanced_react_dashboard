@@ -2,7 +2,7 @@ import AsyncErrorBoundary from "@components/common/AsyncErrorBoundary";
 import AsyncDataWidget from "@components/widgets/AsyncDataWidget";
 import OrdersTable from "@components/widgets/OrdersTable";
 import SalesChart from "@components/widgets/SalesChart";
-import LoadingSpinner from "@components/common/LoadingSpinner";
+import LoadingSpinner from "@components/common/LoadingSpinner/LoadingSpinner";
 
 export default function Analytics() {
   return (

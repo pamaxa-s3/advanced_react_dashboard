@@ -1,30 +1,29 @@
 export default function Sidebar({ activeSection, onSectionChange }) {
   const sections = ["overview", "sales", "users", "analytics"];
+
   return (
-    <aside
-      style={{
-        width: 180,
-        borderRight: "1px solid #ddd",
-        padding: 16,
-        display: "flex",
-        flexDirection: "column",
-        gap: 8,
-      }}
-    >
+    <aside className="sidebar">
       {sections.map((s) => (
         <button
           key={s}
           onClick={() => onSectionChange(s)}
           style={{
-            fontWeight: activeSection === s ? "bold" : "normal",
-            padding: 8,
-            borderRadius: 6,
-            cursor: "pointer",
+            padding: "0.75rem 1rem",
+            borderRadius: "0.5rem",
             border: "none",
-            backgroundColor: activeSection === s ? "#eee" : "transparent",
+            background:
+              activeSection === s
+                ? "var(--primary)"
+                : "transparent",
+            color:
+              activeSection === s
+                ? "#fff"
+                : "var(--text-secondary)",
+            cursor: "pointer",
+            textAlign: "left",
           }}
         >
-          {s.charAt(0).toUpperCase() + s.slice(1)}
+          {s.toUpperCase()}
         </button>
       ))}
     </aside>

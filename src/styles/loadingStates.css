@@ -1,0 +1,25 @@
+.loading-overlay {
+  opacity: 0.6;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.optimistic-saving {
+  position: relative;
+}
+
+.optimistic-saving::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--primary);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { ThemeProvider } from "@context/ThemeContext";
+import { ThemeProvider } from "@contexts/ThemeContext";
 
 import Header from "@components/layout/Header";
 import Sidebar from "@components/layout/Sidebar";
 import MainContent from "@components/layout/MainContent";
-
 import Overview from "./Overview";
 import Sales from "./Sales";
 import Users from "./Users";
@@ -15,24 +14,16 @@ export default function Dashboard() {
 
     return (
         <ThemeProvider>
-            <div
-                className="dashboard"
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "100vh"
-                }}
-            >
+            <div className="dashboard">
                 <Header />
-                <div
-                    className="dashboard-body"
-                    style={{ display: "flex", flex: 1, overflow: "hidden" }}
-                >
+
+                <div className="dashboard-body">
                     <Sidebar
                         activeSection={activeSection}
                         onSectionChange={setActiveSection}
                     />
-                    <MainContent>
+
+                    <MainContent className="main-content">
                         {activeSection === "overview" && <Overview />}
                         {activeSection === "sales" && <Sales />}
                         {activeSection === "users" && <Users />}

@@ -1,31 +1,14 @@
 import React from "react";
 
-function ErrorFallback({ onRetry }) {
-  return (
-    <div role="alert" style={{ padding: 20, border: "1px solid red", borderRadius: 8, backgroundColor: "#ffe5e5", textAlign: "center" }}>
-      <p>Щось пішло не так 😢</p>
-      <button
-        onClick={onRetry}
-        style={{ padding: "6px 12px", borderRadius: 6, border: "none", backgroundColor: "#ef4444", color: "#fff", cursor: "pointer" }}
-      >
-        Спробувати ще раз
-      </button>
-    </div>
-  );
-}
-
-export default class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
+export class ErrorBoundary extends React.Component {
+  state = { hasError: false };
 
   static getDerivedStateFromError() {
     return { hasError: true };
   }
 
   componentDidCatch(error, info) {
-    console.error("ErrorBoundary caught an error:", error, info);
+    console.error("ErrorBoundary:", error, info);
   }
 
   handleRetry = () => {
@@ -33,7 +16,15 @@ export default class ErrorBoundary extends React.Component {
   };
 
   render() {
-    if (this.state.hasError) return <ErrorFallback onRetry={this.handleRetry} />;
+    if (this.state.hasError) {
+      return (
+        <div>
+          <p>Щось пішло не так.</p>
+          <button onClick={this.handleRetry}>Спробувати ще</button>
+        </div>
+      );
+    }
+
     return this.props.children;
   }
 }

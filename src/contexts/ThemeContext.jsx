@@ -1,59 +1,30 @@
-import { createContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useEffect, useMemo, useState } from "react";
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const ThemeContext = createContext(undefined);
-
-const STORAGE_KEY = "app-theme";
-const THEMES = ["light", "dark"];
-
-function getSystemTheme() {
-	if (typeof window === "undefined") return "light";
-	return window.matchMedia("(prefers-color-scheme: dark)").matches
-		? "dark"
-		: "light";
-}
-
-function getInitialTheme() {
-	if (typeof window === "undefined") return "light";
-
-	const stored = localStorage.getItem(STORAGE_KEY);
-	if (THEMES.includes(stored)) return stored;
-
-	return getSystemTheme();
-}
+export const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
-	const [theme, setTheme] = useState(getInitialTheme);
-
-	const toggleTheme = () => {
-		setTheme((prev) => (prev === "light" ? "dark" : "light"));
+	const getInitialTheme = () => {
+		if (typeof window === "undefined") return "light";
+		const saved = localStorage.getItem("theme");
+		if (saved) return saved;
+		return window.matchMedia("(prefers-color-scheme: dark)").matches
+			? "dark"
+			: "light";
 	};
 
-	// sync: localStorage + <body data-theme="">
+	const [theme, setTheme] = useState(getInitialTheme);
+
 	useEffect(() => {
-		localStorage.setItem(STORAGE_KEY, theme);
-		document.body.dataset.theme = theme;
+		document.documentElement.dataset.theme = theme;
+		localStorage.setItem("theme", theme);
 	}, [theme]);
-
-	// listen prefers-color-scheme (only if user hasn't overridden)
-	useEffect(() => {
-		const media = window.matchMedia("(prefers-color-scheme: dark)");
-
-		const handler = (e) => {
-			const stored = localStorage.getItem(STORAGE_KEY);
-			if (!stored) {
-				setTheme(e.matches ? "dark" : "light");
-			}
-		};
-
-		media.addEventListener("change", handler);
-		return () => media.removeEventListener("change", handler);
-	}, []);
 
 	const value = useMemo(
 		() => ({
 			theme,
-			toggleTheme
+			toggleTheme: () =>
+				setTheme((t) => (t === "dark" ? "light" : "dark")),
 		}),
 		[theme]
 	);

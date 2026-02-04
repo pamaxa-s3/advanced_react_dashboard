@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import ErrorBoundary from "./ErrorBoundary";
-import LoadingSpinner from "./LoadingSpinner";
+import { ErrorBoundary } from "./ErrorBoundary";
+import LoadingSpinner from "@components/common/LoadingSpinner/LoadingSpinner";
 
 export default function AsyncErrorBoundary({ children, fallback }) {
   return (

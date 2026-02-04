@@ -2,106 +2,61 @@ import { useOptimistic, useState } from "react";
 import mockOrders from "@data/mockOrders";
 import { updateOrderStatus } from "@utils/api";
 
-
-function showErrorNotification(message) {
-    alert(message);
-}
-
 export default function OrdersTable() {
     const [orders, setOrders] = useState(mockOrders);
-    const [savingOrderId, setSavingOrderId] = useState(null);
+    const [savingId, setSavingId] = useState(null);
 
-    const [optimisticOrders, updateOptimisticOrders] = useOptimistic(
+    const [optimisticOrders, updateOptimistic] = useOptimistic(
         orders,
-        (currentOrders, { id, status }) => {
-            return currentOrders.map(order =>
-                order.id === id ? { ...order, status } : order
-            );
-        }
+        (state, { id, status }) =>
+            state.map((o) =>
+                o.id === id ? { ...o, status } : o
+            )
     );
 
-    const handleStatusChange = async (orderId, newStatus) => {
-        updateOptimisticOrders({ id: orderId, status: newStatus });
-        setSavingOrderId(orderId);
+    const handleChange = async (id, status) => {
+        updateOptimistic({ id, status });
+        setSavingId(id);
 
         try {
-            await updateOrderStatus(orderId, newStatus);
-            setOrders(prev =>
-                prev.map(order =>
-                    order.id === orderId
-                        ? { ...order, status: newStatus }
-                        : order
+            await updateOrderStatus(id, status);
+            setOrders((prev) =>
+                prev.map((o) =>
+                    o.id === id ? { ...o, status } : o
                 )
             );
-        } catch (error) {
-            showErrorNotification(error.message);
+        } catch {
+            alert("Помилка збереження");
         } finally {
-            setSavingOrderId(null);
+            setSavingId(null);
         }
     };
 
     return (
-        <div style={{ overflowX: "auto" }}>
-            <table
-                style={{
-                    width: "100%",
-                    borderCollapse: "collapse",
-                    minWidth: 700
-                }}
-            >
-                <thead>
-                    <tr>
-                        <th>№</th>
-                        <th>Клієнт</th>
-                        <th>Продукт</th>
-                        <th>Сума</th>
-                        <th>Статус</th>
-                        <th>Дата</th>
-                    </tr>
-                </thead>
+        <div className="stats-card">
+            <h3>Замовлення</h3>
 
+            <table width="100%">
                 <tbody>
-                    {optimisticOrders.map(order => (
-                        <tr key={order.id}>
-                            <td>{order.id}</td>
-                            <td>{order.customer}</td>
-                            <td>{order.product}</td>
-                            <td>{order.amount.toLocaleString()} ₴</td>
+                    {optimisticOrders.map((o) => (
+                        <tr
+                            key={o.id}
+                            className={
+                                savingId === o.id ? "optimistic-saving" : ""
+                            }
+                        >
+                            <td>{o.customer}</td>
                             <td>
                                 <select
-                                    value={order.status}
-                                    onChange={e =>
-                                        handleStatusChange(
-                                            order.id,
-                                            e.target.value
-                                        )
+                                    value={o.status}
+                                    onChange={(e) =>
+                                        handleChange(o.id, e.target.value)
                                     }
-                                    disabled={savingOrderId === order.id}
                                 >
-                                    <option value="pending">pending</option>
-                                    <option value="processing">
-                                        processing
-                                    </option>
-                                    <option value="completed">completed</option>
-                                    <option value="cancelled">cancelled</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="processing">Processing</option>
+                                    <option value="completed">Completed</option>
                                 </select>
-
-                                {savingOrderId === order.id && (
-                                    <div
-                                        style={{
-                                            fontSize: 12,
-                                            opacity: 0.6,
-                                            marginTop: 4
-                                        }}
-                                    >
-                                        збереження...
-                                    </div>
-                                )}
-                            </td>
-                            <td>
-                                {new Date(order.date).toLocaleDateString(
-                                    "uk-UA"
-                                )}
                             </td>
                         </tr>
                     ))}

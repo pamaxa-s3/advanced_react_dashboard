@@ -1,37 +1,25 @@
 import { use } from "react";
-import { ThemeContext } from "@context/ThemeContext";
-import { motion } from "framer-motion"; // для плавної анімації
+import { ThemeContext } from "@contexts/ThemeContext";
 
 export default function ThemeToggle() {
-    // 🔹 use() замість useContext
-    const { theme, toggleTheme } = use(ThemeContext);
+    const ctx = use(ThemeContext);
+    if (!ctx) return null;
 
-    const isDark = theme === "dark";
+    const { theme, toggleTheme } = ctx;
 
     return (
         <button
             onClick={toggleTheme}
-            aria-label={`Переключити на ${isDark ? "світлу" : "темну"} тему`}
+            aria-label="Перемкнути тему"
             style={{
-                border: "none",
+                fontSize: "1.25rem",
                 background: "transparent",
+                border: "none",
                 cursor: "pointer",
-                fontSize: 24,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 8,
-                borderRadius: 8
+                transition: "transform 0.2s",
             }}
         >
-            <motion.span
-                key={theme} // key для анімації при зміні
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-                {isDark ? "🌙" : "☀️"}
-            </motion.span>
+            {theme === "dark" ? "🌙" : "☀️"}
         </button>
     );
 }
