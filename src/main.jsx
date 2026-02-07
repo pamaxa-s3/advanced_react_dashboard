@@ -1,6 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import "@styles/dashboard.css";
+import "@styles/loadingStates.css";
+import "@styles/statsCard.css";
+import "@styles/widgets.css";
+import "@styles/themes.css";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(

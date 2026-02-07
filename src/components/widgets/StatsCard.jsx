@@ -4,7 +4,7 @@ export default function StatsCard({ title, value, change, icon }) {
   const titleId = useId();
   const valueId = useId();
 
-  let changeClass = "";
+  let changeClass = "neutral";
   let arrow = "→";
 
   if (change > 0) {
@@ -22,7 +22,7 @@ export default function StatsCard({ title, value, change, icon }) {
       aria-labelledby={titleId}
       aria-describedby={valueId}
     >
-      <div style={{ fontSize: "1.5rem" }}>{icon}</div>
+      <div className="stats-icon">{icon}</div>
 
       <h3 id={titleId}>{title}</h3>
 

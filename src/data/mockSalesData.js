@@ -1,4 +1,5 @@
-const salesData = {
+
+const mockSalesData = {
 	daily: [
 		{ date: "2024-01-01", orders: 12, revenue: 185000 },
 		{ date: "2024-01-02", orders: 18, revenue: 264000 },
@@ -39,4 +40,4 @@ const salesData = {
 	]
 };
 
-export default salesData;
+export default mockSalesData;

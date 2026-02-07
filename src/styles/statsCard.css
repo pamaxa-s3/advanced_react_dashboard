@@ -18,6 +18,11 @@
   color: var(--text-primary);
 }
 
+.stats-change {
+  font-size: 0.9rem;
+}
+
+
 .stats-change.positive {
   color: var(--success);
 }
@@ -25,3 +30,135 @@
 .stats-change.negative {
   color: var(--error);
 }
+
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.stats-table th,
+.stats-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.stats-table th {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.stats-table tr:hover {
+  background: var(--bg-secondary);
+}
+
+
+.sales-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 120px;
+  margin-bottom: 1rem;
+}
+
+.sales-bar {
+  flex: 1;
+  background: var(--primary);
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s;
+}
+
+.skeleton-row {
+  height: 16px;
+  width: 100%;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--border),
+    var(--border-hover),
+    var(--border)
+  );
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.positive {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.negative {
+  color: var(--error);
+  font-weight: 600;
+}
+/* підсвітка змін */
+.highlight-positive {
+  animation: highlightGreen 1.5s ease;
+}
+.highlight-negative {
+  animation: highlightRed 1.5s ease;
+}
+
+@keyframes highlightGreen {
+  0% { background-color: var(--success-bg, #d1fae5); }
+  50% { background-color: transparent; }
+  100% { background-color: transparent; }
+}
+
+@keyframes highlightRed {
+  0% { background-color: var(--error-bg, #fee2e2); }
+  50% { background-color: transparent; }
+  100% { background-color: transparent; }
+}
+
+/* skeleton row */
+.skeleton-row {
+  height: 20px;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-start, #eee) 25%,
+    var(--skeleton-mid, #ddd) 50%,
+    var(--skeleton-start, #eee) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+/* .stats-card {
+  background: var(--card-bg, #111);
+  padding: 1rem;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+} */
+
+.stats-icon {
+  font-size: 1.5rem;
+}
+

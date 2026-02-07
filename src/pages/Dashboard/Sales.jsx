@@ -1,7 +1,7 @@
 import { Suspense, useState } from "react";
 import SalesChart from "@components/widgets/SalesChart";
 import OrdersTable from "@components/widgets/OrdersTable";
-import LoadingSpinner from "@components/common/LoadingSpinner";
+import LoadingSpinner from "@components/common/LoadingSpinner/LoadingSpinner";
 
 const Sales = () => {
 	const [period, setPeriod] = useState("month");

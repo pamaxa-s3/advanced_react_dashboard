@@ -1,4 +1,4 @@
-const orders = [
+const mockOrders = [
 	{
 		id: 1,
 		customer: "Іван Петренко",
@@ -109,4 +109,4 @@ const orders = [
 	})
 ];
 
-export default orders;
+export default mockOrders;

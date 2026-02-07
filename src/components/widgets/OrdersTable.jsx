@@ -1,10 +1,11 @@
-import { useOptimistic, useState } from "react";
+import { useOptimistic, useState, useTransition } from "react";
 import mockOrders from "@data/mockOrders";
 import { updateOrderStatus } from "@utils/api";
 
 export default function OrdersTable() {
     const [orders, setOrders] = useState(mockOrders);
     const [savingId, setSavingId] = useState(null);
+    const [isPending, startTransition] = useTransition();
 
     const [optimisticOrders, updateOptimistic] = useOptimistic(
         orders,
@@ -14,26 +15,29 @@ export default function OrdersTable() {
             )
     );
 
-    const handleChange = async (id, status) => {
-        updateOptimistic({ id, status });
-        setSavingId(id);
+    const handleChange = (id, status) => {
+        startTransition(async () => {
+            updateOptimistic({ id, status });
+            setSavingId(id);
 
-        try {
-            await updateOrderStatus(id, status);
-            setOrders((prev) =>
-                prev.map((o) =>
-                    o.id === id ? { ...o, status } : o
-                )
-            );
-        } catch {
-            alert("Помилка збереження");
-        } finally {
-            setSavingId(null);
-        }
+            try {
+                await updateOrderStatus(id, status);
+
+                setOrders((prev) =>
+                    prev.map((o) =>
+                        o.id === id ? { ...o, status } : o
+                    )
+                );
+            } catch {
+                alert("Помилка збереження");
+            } finally {
+                setSavingId(null);
+            }
+        });
     };
 
     return (
-        <div className="stats-card">
+        <div className={`stats-card ${isPending ? "loading-overlay" : ""}`}>
             <h3>Замовлення</h3>
 
             <table width="100%">
@@ -41,9 +45,7 @@ export default function OrdersTable() {
                     {optimisticOrders.map((o) => (
                         <tr
                             key={o.id}
-                            className={
-                                savingId === o.id ? "optimistic-saving" : ""
-                            }
+                            className={savingId === o.id ? "optimistic-saving" : ""}
                         >
                             <td>{o.customer}</td>
                             <td>
