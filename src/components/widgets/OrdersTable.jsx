@@ -1,81 +1,114 @@
-import { useOptimistic, useState, useTransition } from "react";
-import mockOrders from "@data/mockOrders";
-import { updateOrderStatus } from "@utils/api";
+import useOrdersTable from "@hooks/useOrdersTable";
 
-export default function OrdersTable({ orders = mockOrders }) {
-    const [savingId, setSavingId] = useState(null);
-    const [isPending, startTransition] = useTransition();
+const STATUS_OPTIONS = [
+    { value: "pending", label: "Pending" },
+    { value: "processing", label: "Processing" },
+    { value: "completed", label: "Completed" },
+    { value: "cancelled", label: "Cancelled" },
+];
 
-    const [optimisticOrders, updateOptimistic] = useOptimistic(
+export default function OrdersTable() {
+    const {
         orders,
-        (state, { id, status }) =>
-            state.map((o) =>
-                o.id === id ? { ...o, status } : o
-            )
-    );
-
-    const handleChange = (id, status) => {
-        startTransition(async () => {
-            updateOptimistic({ id, status });
-            setSavingId(id);
-
-            try {
-                await updateOrderStatus(id, status);
-            } catch {
-                alert("Помилка збереження");
-            } finally {
-                setSavingId(null);
-            }
-        });
-    };
+        page,
+        totalPages,
+        statusFilter,
+        setStatusFilter,
+        changeStatus,
+        isPending,
+        savingId,
+        setPage,
+    } = useOrdersTable();
 
     return (
         <div className={`stats-card ${isPending ? "loading-overlay" : ""}`}>
-            <h3>Замовлення</h3>
+            <div className="stats-header">
+                <h3>🛒 Останні замовлення</h3>
+
+                <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                    <option value="all">Всі</option>
+                    {STATUS_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.value}>
+                            {o.label}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
             <table width="100%">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Клієнт</th>
-                        <th>Товар</th>
+                        <th>Продукт</th>
+                        <th>Сума</th>
                         <th>Статус</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    {optimisticOrders.length === 0 && (
+                    {orders.length === 0 && (
                         <tr>
-                            <td colSpan={3} className="muted">
+                            <td colSpan={5} className="muted">
                                 Нічого не знайдено
                             </td>
                         </tr>
                     )}
 
-                    {optimisticOrders.map((o) => (
+                    {orders.map((o) => (
                         <tr
                             key={o.id}
                             className={savingId === o.id ? "optimistic-saving" : ""}
                         >
+                            <td>{o.id}</td>
                             <td>{o.customer}</td>
                             <td>{o.product}</td>
+                            <td>{o.amount.toLocaleString("uk-UA")} ₴</td>
+
                             <td>
-                                <select
-                                    value={o.status}
-                                    onChange={(e) =>
-                                        handleChange(o.id, e.target.value)
-                                    }
-                                    disabled={savingId === o.id}
-                                >
-                                    <option value="pending">Pending</option>
-                                    <option value="processing">Processing</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="cancelled">Cancelled</option>
-                                </select>
+                                <div className={`status ${o.status}`}>
+                                    <select
+                                        value={o.status}
+                                        onChange={(e) =>
+                                            changeStatus(o.id, e.target.value)
+                                        }
+                                    >
+                                        {STATUS_OPTIONS.map((opt) => (
+                                            <option key={opt.value} value={opt.value}>
+                                                {opt.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+
+            {/* ===== PAGINATION ===== */}
+            <div className="pagination">
+                <button
+                    disabled={page === 1}
+                    onClick={() => setPage((p) => p - 1)}
+                >
+                    ←
+                </button>
+
+                <span>
+                    {page} / {totalPages}
+                </span>
+
+                <button
+                    disabled={page === totalPages}
+                    onClick={() => setPage((p) => p + 1)}
+                >
+                    →
+                </button>
+            </div>
         </div>
     );
 }

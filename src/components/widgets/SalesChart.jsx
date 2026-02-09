@@ -15,6 +15,18 @@ function useDebounce(value, delay = 400) {
   return debounced;
 }
 
+/**
+ * stable key generator
+ */
+function getRowKey(row) {
+  return (
+    row.date ??
+    row.week ??
+    row.month ??
+    row.year
+  );
+}
+
 export default function SalesChart() {
   const [period, setPeriod] = useState("yearly");
   const debouncedPeriod = useDebounce(period);
@@ -38,7 +50,7 @@ export default function SalesChart() {
   }, [debouncedPeriod]);
 
   /**
-   * Для підсвітки змін ↑ ↓
+   * ↑ ↓ diff
    */
   const withDiff = useMemo(() => {
     return data.map((row, i) => {
@@ -52,9 +64,6 @@ export default function SalesChart() {
     });
   }, [data]);
 
-  /**
-   * max value для графіка
-   */
   const maxRevenue = Math.max(...data.map((d) => d.revenue || 0), 1);
 
   return (
@@ -67,6 +76,7 @@ export default function SalesChart() {
           disabled={isPending}
           onChange={(e) => setPeriod(e.target.value)}
         >
+          <option value="daily">День</option>
           <option value="weekly">Тиждень</option>
           <option value="monthly">Місяць</option>
           <option value="yearly">Рік</option>
@@ -74,17 +84,19 @@ export default function SalesChart() {
       </div>
 
       {/* ================= GRAPH ================= */}
-      <div className="sales-chart">
-        {data.map((row, index) => (
-          <div
-            key={`bar-${index}`}
-            className="sales-bar"
-            style={{
-              height: `${(row.revenue / maxRevenue) * 100}%`,
-            }}
-            title={`${row.revenue.toLocaleString()} ₴`}
-          />
-        ))}
+      <div className="sales-chart-wrapper">
+        <div className="sales-chart-scroll">
+          {data.map((row) => (
+            <div
+              key={`bar-${getRowKey(row)}`}
+              className="sales-bar"
+              style={{
+                height: `${(row.revenue / maxRevenue) * 100}%`,
+              }}
+              title={`${row.revenue.toLocaleString("uk-UA")} ₴`}
+            />
+          ))}
+        </div>
       </div>
 
       {/* ================= TABLE ================= */}
@@ -109,9 +121,9 @@ export default function SalesChart() {
             ))}
 
           {!isPending &&
-            withDiff.map((row, index) => (
-              <tr key={`${debouncedPeriod}-${index}`}>
-                <td>{row.year ?? row.month ?? row.week}</td>
+            withDiff.map((row) => (
+              <tr key={`row-${getRowKey(row)}`}>
+                <td>{row.year ?? row.month ?? row.week ?? row.date}</td>
                 <td>{row.orders.toLocaleString("uk-UA")}</td>
                 <td>{row.revenue.toLocaleString("uk-UA")} ₴</td>
                 <td
@@ -126,8 +138,8 @@ export default function SalesChart() {
                   {row.diff === null
                     ? "—"
                     : row.diff > 0
-                      ? `↑ ${row.diff.toLocaleString()}`
-                      : `↓ ${Math.abs(row.diff).toLocaleString()}`}
+                      ? `↑ ${row.diff.toLocaleString("uk-UA")}`
+                      : `↓ ${Math.abs(row.diff).toLocaleString("uk-UA")}`}
                 </td>
               </tr>
             ))}
