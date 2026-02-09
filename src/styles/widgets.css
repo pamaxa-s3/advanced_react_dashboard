@@ -53,3 +53,11 @@ mark {
     color: var(--text-secondary);
     font-size: 0.9rem;
 }
+
+.search-results li.highlighted {
+    background: var(--primary);
+    color: #fff;
+}
+.search-results li:hover {
+    background: var(--primary-light);
+}
